@@ -43,3 +43,6 @@ CLIENT_FOLDERS = [
 
 # Contactenbestand (xlsx) voor correcte spelling van namen en bedrijven
 CONTACTEN_FILE = "/Users/arthur/Documents/Smart2Result/Contacten.xlsx"
+
+# iCloud Drive inbox (hier komen opnames van iPhone binnen)
+ICLOUD_INBOX = "~/Library/Mobile Documents/com~apple~CloudDocs/projectenlog/input/inbox"

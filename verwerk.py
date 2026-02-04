@@ -14,6 +14,7 @@ from openai import OpenAI
 from config import (
     CLIENT_FOLDERS,
     DOCS_DIR,
+    ICLOUD_INBOX,
     ONBEKEND_PROJECT,
     PROJECT_MAP,
     PROJECTEN,
@@ -42,10 +43,28 @@ client = OpenAI()
 # Directory setup
 # ---------------------------------------------------------------------------
 
+ICLOUD_INBOX_PATH = os.path.expanduser(ICLOUD_INBOX)
+
+
 def ensure_dirs():
     os.makedirs(INBOX, exist_ok=True)
     os.makedirs(PROCESSED, exist_ok=True)
     os.makedirs(PROJECTEN_DIR, exist_ok=True)
+
+
+def collect_inbox_files() -> list[str]:
+    """Collect supported files from both local inbox and iCloud inbox."""
+    all_files: list[str] = []
+    for inbox_dir in (INBOX, ICLOUD_INBOX_PATH):
+        if not os.path.isdir(inbox_dir):
+            continue
+        for filename in sorted(os.listdir(inbox_dir)):
+            ext = os.path.splitext(filename)[1].lower()
+            if ext in AUDIO_EXTENSIONS + TEXT_EXTENSIONS:
+                full_path = os.path.join(inbox_dir, filename)
+                if os.path.isfile(full_path):
+                    all_files.append(full_path)
+    return all_files
 
 
 # ---------------------------------------------------------------------------
@@ -535,12 +554,7 @@ def run_batch():
     """Non-interactive batch mode: process all inbox files grouped by date."""
     ensure_dirs()
 
-    files = sorted(os.listdir(INBOX))
-    supported = [
-        f
-        for f in files
-        if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS + TEXT_EXTENSIONS
-    ]
+    supported = collect_inbox_files()
 
     if not supported:
         log.info("Geen bestanden in inbox.")
@@ -548,11 +562,9 @@ def run_batch():
 
     # Group files by date
     by_date: dict[str, list[str]] = defaultdict(list)
-    for filename in supported:
-        file_path = os.path.join(INBOX, filename)
-        if os.path.isfile(file_path):
-            file_date = extract_date(file_path)
-            by_date[file_date].append(file_path)
+    for file_path in supported:
+        file_date = extract_date(file_path)
+        by_date[file_date].append(file_path)
 
     # Process each date group
     for file_date in sorted(by_date):
@@ -587,23 +599,16 @@ def run_interactive():
     """Interactive mode: process files with user prompts for unknown projects."""
     ensure_dirs()
 
-    files = sorted(os.listdir(INBOX))
-    supported = [
-        f
-        for f in files
-        if os.path.splitext(f)[1].lower() in AUDIO_EXTENSIONS + TEXT_EXTENSIONS
-    ]
+    supported = collect_inbox_files()
 
     if not supported:
         print("Geen bestanden in inbox.")
         return
 
     by_date: dict[str, list[str]] = defaultdict(list)
-    for filename in supported:
-        file_path = os.path.join(INBOX, filename)
-        if os.path.isfile(file_path):
-            file_date = extract_date(file_path)
-            by_date[file_date].append(file_path)
+    for file_path in supported:
+        file_date = extract_date(file_path)
+        by_date[file_date].append(file_path)
 
     for file_date in sorted(by_date):
         day_entries: dict[str, list[str]] = defaultdict(list)
