@@ -1,0 +1,23 @@
+# Data directories (niet in git — lokaal beheerd)
+input/inbox/*
+input/processed/*
+projecten/*
+
+# Bewaar directorystructuur
+!input/inbox/.gitkeep
+!input/processed/.gitkeep
+!projecten/.gitkeep
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
