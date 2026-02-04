@@ -89,6 +89,36 @@
     padding: 0 2rem;
   }
 
+  #setup-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #2a2a2a;
+    color: #ccc;
+    font-size: 0.8rem;
+    padding: 1rem 1.2rem;
+    line-height: 1.5;
+    display: none;
+    z-index: 10;
+  }
+
+  #setup-banner a {
+    color: #6af;
+    text-decoration: underline;
+  }
+
+  #setup-banner .close-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.8rem;
+    color: #999;
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
   .pulse {
     animation: pulse 1.5s ease-in-out infinite;
   }
@@ -100,6 +130,15 @@
 </style>
 </head>
 <body>
+
+<div id="setup-banner">
+  <button class="close-btn" onclick="dismissSetup()">&times;</button>
+  <strong>Eenmalige instelling:</strong><br>
+  Ga naar Instellingen &rarr; Apps &rarr; Safari &rarr; Downloads &rarr; kies
+  &ldquo;iCloud Drive&rdquo; en selecteer de map
+  <code>projectenlog/input/inbox</code>.<br>
+  Daarna worden opnames automatisch opgeslagen.
+</div>
 
 <div id="status">Tik om op te nemen</div>
 <div id="timer"></div>
@@ -212,30 +251,8 @@ async function saveRecording() {
   const ext = mediaRecorder.mimeType.includes('mp4') ? '.m4a' : '.webm';
   const finalName = ext === '.m4a' ? filename : filename.replace('.m4a', ext);
   const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
-  const file = new File([blob], finalName, { type: mediaRecorder.mimeType });
 
-  // Try Web Share API (best on iOS — opens native share sheet)
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({
-        files: [file],
-        title: 'Memo',
-      });
-      statusEl.textContent = 'Opgeslagen';
-      saveMsg.textContent = 'Bewaar in iCloud Drive → projectenlog/input/inbox/';
-      resetAfterDelay();
-      return;
-    } catch (e) {
-      // User cancelled share — fall through to download
-      if (e.name === 'AbortError') {
-        statusEl.textContent = 'Geannuleerd';
-        resetAfterDelay();
-        return;
-      }
-    }
-  }
-
-  // Fallback: direct download (works on desktop / Android)
+  // Direct download — iOS Safari saves to configured download location
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -243,9 +260,11 @@ async function saveRecording() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 
-  statusEl.textContent = 'Gedownload';
+  // Small delay before revoking so the download starts
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+
+  statusEl.textContent = 'Opgeslagen';
   saveMsg.textContent = finalName;
   resetAfterDelay();
 }
@@ -265,6 +284,16 @@ btn.addEventListener('click', () => {
     startRecording();
   }
 });
+
+// Show setup instructions once
+function dismissSetup() {
+  document.getElementById('setup-banner').style.display = 'none';
+  localStorage.setItem('setup-done', '1');
+}
+
+if (!localStorage.getItem('setup-done')) {
+  document.getElementById('setup-banner').style.display = 'block';
+}
 </script>
 </body>
 </html>
