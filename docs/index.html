@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Memo">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Memo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #1a1a1a;
+    color: #fff;
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    -webkit-user-select: none;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  #status {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #999;
+    min-height: 1.5em;
+  }
+
+  #timer {
+    font-size: 3rem;
+    font-weight: 200;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 3rem;
+    min-height: 1.2em;
+    color: #fff;
+  }
+
+  #btn {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s;
+    position: relative;
+  }
+
+  #btn:active {
+    transform: scale(0.95);
+  }
+
+  #btn-inner {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #e33;
+    transition: border-radius 0.2s, width 0.2s, height 0.2s;
+  }
+
+  body.recording #btn-inner {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+  }
+
+  body.recording #status {
+    color: #e33;
+  }
+
+  #save-msg {
+    position: fixed;
+    bottom: 3rem;
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    padding: 0 2rem;
+  }
+
+  .pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+</style>
+</head>
+<body>
+
+<div id="status">Tik om op te nemen</div>
+<div id="timer"></div>
+<div id="btn" role="button" aria-label="Opnemen">
+  <div id="btn-inner"></div>
+</div>
+<div id="save-msg"></div>
+
+<script>
+const btn = document.getElementById('btn');
+const statusEl = document.getElementById('status');
+const timerEl = document.getElementById('timer');
+const saveMsg = document.getElementById('save-msg');
+
+let mediaRecorder = null;
+let chunks = [];
+let startTime = 0;
+let timerInterval = null;
+let stream = null;
+
+// Pre-request mic permission on load
+async function initMic() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Stop tracks immediately — we just wanted permission
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  } catch (e) {
+    statusEl.textContent = 'Microfoon niet beschikbaar';
+  }
+}
+initMic();
+
+function pad(n) {
+  return String(n).padStart(2, '0');
+}
+
+function formatTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${pad(m)}:${pad(sec)}`;
+}
+
+function makeFilename() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const MM = pad(d.getMonth() + 1);
+  const dd = pad(d.getDate());
+  const hh = pad(d.getHours());
+  const mm = pad(d.getMinutes());
+  return `${yyyy}-${MM}-${dd}_${hh}-${mm}.m4a`;
+}
+
+function updateTimer() {
+  timerEl.textContent = formatTime(Date.now() - startTime);
+}
+
+async function startRecording() {
+  chunks = [];
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (e) {
+    statusEl.textContent = 'Microfoon geweigerd';
+    return;
+  }
+
+  // Prefer mp4/m4a (iOS), fall back to webm
+  const mimeType = MediaRecorder.isTypeSupported('audio/mp4')
+    ? 'audio/mp4'
+    : MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+      ? 'audio/webm;codecs=opus'
+      : '';
+
+  const options = mimeType ? { mimeType } : {};
+  mediaRecorder = new MediaRecorder(stream, options);
+
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) chunks.push(e.data);
+  };
+
+  mediaRecorder.onstop = () => {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    saveRecording();
+  };
+
+  mediaRecorder.start(1000); // collect chunks every second
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 200);
+
+  document.body.classList.add('recording');
+  statusEl.textContent = 'Opnemen…';
+  statusEl.classList.add('pulse');
+  saveMsg.textContent = '';
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+  clearInterval(timerInterval);
+  document.body.classList.remove('recording');
+  statusEl.classList.remove('pulse');
+  statusEl.textContent = 'Opslaan…';
+}
+
+async function saveRecording() {
+  const filename = makeFilename();
+  const ext = mediaRecorder.mimeType.includes('mp4') ? '.m4a' : '.webm';
+  const finalName = ext === '.m4a' ? filename : filename.replace('.m4a', ext);
+  const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
+  const file = new File([blob], finalName, { type: mediaRecorder.mimeType });
+
+  // Try Web Share API (best on iOS — opens native share sheet)
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'Memo',
+      });
+      statusEl.textContent = 'Opgeslagen';
+      saveMsg.textContent = 'Bewaar in iCloud Drive → projectenlog/input/inbox/';
+      resetAfterDelay();
+      return;
+    } catch (e) {
+      // User cancelled share — fall through to download
+      if (e.name === 'AbortError') {
+        statusEl.textContent = 'Geannuleerd';
+        resetAfterDelay();
+        return;
+      }
+    }
+  }
+
+  // Fallback: direct download (works on desktop / Android)
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = finalName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  statusEl.textContent = 'Gedownload';
+  saveMsg.textContent = finalName;
+  resetAfterDelay();
+}
+
+function resetAfterDelay() {
+  setTimeout(() => {
+    statusEl.textContent = 'Tik om op te nemen';
+    timerEl.textContent = '';
+    saveMsg.textContent = '';
+  }, 3000);
+}
+
+btn.addEventListener('click', () => {
+  if (document.body.classList.contains('recording')) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+});
+</script>
+</body>
+</html>
