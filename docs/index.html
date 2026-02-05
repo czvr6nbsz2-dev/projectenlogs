@@ -158,19 +158,6 @@ let startTime = 0;
 let timerInterval = null;
 let stream = null;
 
-// Pre-request mic permission on load
-async function initMic() {
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // Stop tracks immediately — we just wanted permission
-    stream.getTracks().forEach(t => t.stop());
-    stream = null;
-  } catch (e) {
-    statusEl.textContent = 'Microfoon niet beschikbaar';
-  }
-}
-initMic();
-
 function pad(n) {
   return String(n).padStart(2, '0');
 }
