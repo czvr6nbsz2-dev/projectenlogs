@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="90" fill="#3478F6"/>
+
+  <!-- Microphone -->
+  <rect x="196" y="120" width="120" height="180" rx="60" fill="none" stroke="white" stroke-width="24"/>
+  <path d="M156 260 v40 a100 100 0 0 0 200 0 v-40" fill="none" stroke="white" stroke-width="24" stroke-linecap="round"/>
+  <line x1="256" y1="400" x2="256" y2="340" stroke="white" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Log lines -->
+  <line x1="320" y1="140" x2="380" y2="140" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  <line x1="320" y1="190" x2="380" y2="190" stroke="white" stroke-width="20" stroke-linecap="round"/>
+  <line x1="320" y1="240" x2="380" y2="240" stroke="white" stroke-width="20" stroke-linecap="round"/>
+</svg>
