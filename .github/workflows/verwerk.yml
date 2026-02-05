@@ -6,6 +6,9 @@ on:
     - cron: '59 22 * * *'
   workflow_dispatch: # Handmatig triggeren
 
+permissions:
+  contents: write
+
 jobs:
   verwerk:
     runs-on: ubuntu-latest
