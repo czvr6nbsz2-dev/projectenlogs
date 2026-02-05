@@ -134,10 +134,9 @@
 <div id="setup-banner">
   <button class="close-btn" onclick="dismissSetup()">&times;</button>
   <strong>Eenmalige instelling:</strong><br>
-  Ga naar Instellingen &rarr; Apps &rarr; Safari &rarr; Downloads &rarr; kies
-  &ldquo;iCloud Drive&rdquo; en selecteer de map
-  <code>projectenlog/input/inbox</code>.<br>
-  Daarna worden opnames automatisch opgeslagen.
+  Voer je GitHub Personal Access Token in (met repo scope):<br>
+  <input type="password" id="token-input" placeholder="ghp_..." style="width:100%;margin:0.5rem 0;padding:0.5rem;border-radius:4px;border:none;">
+  <button onclick="saveToken()" style="padding:0.4rem 1rem;border-radius:4px;border:none;background:#6af;color:#000;cursor:pointer;">Opslaan</button>
 </div>
 
 <div id="status">Tik om op te nemen</div>
@@ -246,26 +245,79 @@ function stopRecording() {
   statusEl.textContent = 'Opslaan…';
 }
 
+// GitHub config
+const GITHUB_REPO = 'czvr6nbsz2-dev/projectenlogs';
+const GITHUB_PATH = 'input/inbox';
+
+function getToken() {
+  return localStorage.getItem('github-token') || '';
+}
+
+function saveToken() {
+  const token = document.getElementById('token-input').value.trim();
+  if (token) {
+    localStorage.setItem('github-token', token);
+    dismissSetup();
+    statusEl.textContent = 'Token opgeslagen';
+    setTimeout(() => { statusEl.textContent = 'Tik om op te nemen'; }, 2000);
+  }
+}
+
+async function uploadToGitHub(filename, blob) {
+  const token = getToken();
+  if (!token) {
+    throw new Error('Geen GitHub token ingesteld');
+  }
+
+  const buffer = await blob.arrayBuffer();
+  const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+
+  const response = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_PATH}/${filename}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `Upload ${filename}`,
+        content: base64,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.message || 'Upload mislukt');
+  }
+}
+
 async function saveRecording() {
   const filename = makeFilename();
   const ext = mediaRecorder.mimeType.includes('mp4') ? '.m4a' : '.webm';
   const finalName = ext === '.m4a' ? filename : filename.replace('.m4a', ext);
   const blob = new Blob(chunks, { type: mediaRecorder.mimeType });
 
-  // Direct download — iOS Safari saves to configured download location
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = finalName;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  // Upload naar GitHub
+  try {
+    await uploadToGitHub(finalName, blob);
+    statusEl.textContent = 'Geupload';
+    saveMsg.textContent = finalName;
+  } catch (e) {
+    statusEl.textContent = 'Fout: ' + e.message;
+    saveMsg.textContent = 'Upload mislukt';
+    // Fallback: download lokaal
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = finalName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  }
 
-  // Small delay before revoking so the download starts
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
-
-  statusEl.textContent = 'Opgeslagen';
-  saveMsg.textContent = finalName;
   resetAfterDelay();
 }
 
@@ -285,13 +337,12 @@ btn.addEventListener('click', () => {
   }
 });
 
-// Show setup instructions once
+// Show setup if no token
 function dismissSetup() {
   document.getElementById('setup-banner').style.display = 'none';
-  localStorage.setItem('setup-done', '1');
 }
 
-if (!localStorage.getItem('setup-done')) {
+if (!getToken()) {
   document.getElementById('setup-banner').style.display = 'block';
 }
 </script>

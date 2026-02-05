@@ -44,5 +44,12 @@ CLIENT_FOLDERS = [
 # Contactenbestand (xlsx) voor correcte spelling van namen en bedrijven
 CONTACTEN_FILE = "/Users/arthur/Documents/Smart2Result/Contacten.xlsx"
 
-# iCloud Drive inbox (hier komen opnames van iPhone binnen)
+# Data paden - standaard iCloud (Mac), maar te overschrijven via environment
+# voor GitHub Actions of andere omgevingen
+ICLOUD_BASE = "~/Library/Mobile Documents/com~apple~CloudDocs/projectenlog"
 ICLOUD_INBOX = "~/Library/Mobile Documents/com~apple~CloudDocs/projectenlog/input/inbox"
+ICLOUD_PROCESSED = "~/Library/Mobile Documents/com~apple~CloudDocs/projectenlog/input/processed"
+ICLOUD_PROJECTEN = "~/Library/Mobile Documents/com~apple~CloudDocs/projectenlog/projecten"
+
+# Als PROJECTENLOG_LOCAL is gezet, gebruik lokale repo paden (voor GitHub Actions)
+USE_LOCAL_PATHS = bool(__import__("os").environ.get("GITHUB_ACTIONS"))

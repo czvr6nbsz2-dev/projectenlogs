@@ -11,20 +11,38 @@ from datetime import date, datetime
 
 from openai import OpenAI
 
+# Load .env file if present (for API key)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+_env_path = os.path.join(BASE_DIR, ".env")
+if os.path.exists(_env_path):
+    with open(_env_path) as _f:
+        for _line in _f:
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _key, _val = _line.split("=", 1)
+                os.environ.setdefault(_key.strip(), _val.strip())
+
 from config import (
     CLIENT_FOLDERS,
     DOCS_DIR,
     ICLOUD_INBOX,
+    ICLOUD_PROCESSED,
+    ICLOUD_PROJECTEN,
     ONBEKEND_PROJECT,
-    PROJECT_MAP,
     PROJECTEN,
     TEXT_MODEL,
+    USE_LOCAL_PATHS,
 )
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-INBOX = os.path.join(BASE_DIR, "input", "inbox")
-PROCESSED = os.path.join(BASE_DIR, "input", "processed")
-PROJECTEN_DIR = os.path.join(BASE_DIR, PROJECT_MAP)
+# Gebruik iCloud paden (Mac) of lokale repo paden (GitHub Actions)
+if USE_LOCAL_PATHS:
+    INBOX = os.path.join(BASE_DIR, "input", "inbox")
+    PROCESSED = os.path.join(BASE_DIR, "input", "processed")
+    PROJECTEN_DIR = os.path.join(BASE_DIR, "projecten")
+else:
+    INBOX = os.path.expanduser(ICLOUD_INBOX)
+    PROCESSED = os.path.expanduser(ICLOUD_PROCESSED)
+    PROJECTEN_DIR = os.path.expanduser(ICLOUD_PROJECTEN)
 
 AUDIO_EXTENSIONS = (".m4a", ".wav", ".mp3", ".webm", ".mp4")
 TEXT_EXTENSIONS = (".txt", ".md")
@@ -43,9 +61,6 @@ client = OpenAI()
 # Directory setup
 # ---------------------------------------------------------------------------
 
-ICLOUD_INBOX_PATH = os.path.expanduser(ICLOUD_INBOX)
-
-
 def ensure_dirs():
     os.makedirs(INBOX, exist_ok=True)
     os.makedirs(PROCESSED, exist_ok=True)
@@ -53,17 +68,16 @@ def ensure_dirs():
 
 
 def collect_inbox_files() -> list[str]:
-    """Collect supported files from both local inbox and iCloud inbox."""
+    """Collect supported files from iCloud inbox."""
     all_files: list[str] = []
-    for inbox_dir in (INBOX, ICLOUD_INBOX_PATH):
-        if not os.path.isdir(inbox_dir):
-            continue
-        for filename in sorted(os.listdir(inbox_dir)):
-            ext = os.path.splitext(filename)[1].lower()
-            if ext in AUDIO_EXTENSIONS + TEXT_EXTENSIONS:
-                full_path = os.path.join(inbox_dir, filename)
-                if os.path.isfile(full_path):
-                    all_files.append(full_path)
+    if not os.path.isdir(INBOX):
+        return all_files
+    for filename in sorted(os.listdir(INBOX)):
+        ext = os.path.splitext(filename)[1].lower()
+        if ext in AUDIO_EXTENSIONS + TEXT_EXTENSIONS:
+            full_path = os.path.join(INBOX, filename)
+            if os.path.isfile(full_path):
+                all_files.append(full_path)
     return all_files
 
 

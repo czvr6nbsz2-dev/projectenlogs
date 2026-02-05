@@ -1,0 +1,45 @@
+name: Verwerk audio
+
+on:
+  schedule:
+    # Elke dag om 23:59 UTC+1 (= 22:59 UTC)
+    - cron: '59 22 * * *'
+  workflow_dispatch: # Handmatig triggeren
+
+jobs:
+  verwerk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Maak directories aan
+        run: |
+          mkdir -p input/inbox input/processed projecten
+
+      - name: Verwerk inbox
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python verwerk.py --batch
+
+      - name: Commit resultaten
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Geen wijzigingen"
+          else
+            git commit -m "Verwerk audio $(date +%Y-%m-%d)"
+            git push
+          fi

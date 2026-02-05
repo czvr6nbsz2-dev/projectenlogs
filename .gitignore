@@ -1,12 +1,9 @@
-# Data directories (niet in git — lokaal beheerd)
-input/inbox/*
+# Processed audio archief (niet in git — te groot)
 input/processed/*
-projecten/*
-
-# Bewaar directorystructuur
-!input/inbox/.gitkeep
 !input/processed/.gitkeep
-!projecten/.gitkeep
+
+# Inbox en projecten worden nu via GitHub Actions verwerkt
+# input/inbox/* en projecten/* zijn NIET meer geignoreerd
 
 # macOS
 .DS_Store
