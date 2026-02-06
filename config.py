@@ -6,6 +6,7 @@ PROJECTEN = {
     "SWZ – Waterlelie": ["Waterlelie"],
     "SWZ – Vechtrand": ["Vechtrand"],
     "SWZ – Zwolle Zuid Zuid": ["Zwolle Zuid", "Zwolle Zuid Zuid"],
+    "SWZ – Knarrenhof": ["Knarrenhof"],
 
     "Openbaar Belang – Parkeren Zwolle": ["Parkeren Zwolle"],
 
