@@ -126,6 +126,9 @@ def read_text(text_path: str) -> str:
 
 
 def get_plain_text(file_path: str) -> str | None:
+    if os.path.getsize(file_path) == 0:
+        log.warning("Overgeslagen (leeg bestand): %s", file_path)
+        return None
     ext = os.path.splitext(file_path)[1].lower()
     if ext in AUDIO_EXTENSIONS:
         return transcribe(file_path)
