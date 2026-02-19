@@ -67,6 +67,25 @@ def ensure_dirs():
     os.makedirs(PROJECTEN_DIR, exist_ok=True)
 
 
+def _normalize_dashes(s: str) -> str:
+    """Normalize en-dash, em-dash, and other dash variants to a regular hyphen."""
+    return s.replace("\u2013", "-").replace("\u2014", "-").replace("\u2012", "-")
+
+
+def normalize_project_name(name: str) -> str:
+    """Map an LLM-returned project name to the canonical PROJECTEN key.
+
+    Handles cases where the LLM uses a regular hyphen instead of an en-dash.
+    """
+    if name in PROJECTEN or name == ONBEKEND_PROJECT:
+        return name
+    norm = _normalize_dashes(name)
+    for canonical in PROJECTEN:
+        if _normalize_dashes(canonical) == norm:
+            return canonical
+    return ONBEKEND_PROJECT
+
+
 def collect_inbox_files() -> list[str]:
     """Collect supported files from iCloud inbox."""
     all_files: list[str] = []
@@ -594,7 +613,7 @@ def run_batch():
             entries = process_file(file_path, file_date, time_label)
 
             for entry in entries:
-                project = entry.get("project", ONBEKEND_PROJECT)
+                project = normalize_project_name(entry.get("project", ONBEKEND_PROJECT))
                 content = entry.get("entry", "")
                 if content.strip():
                     day_entries[project].append(content.strip())
@@ -635,7 +654,7 @@ def run_interactive():
             entries = process_file(file_path, file_date, time_label)
 
             for entry in entries:
-                project = entry.get("project", ONBEKEND_PROJECT)
+                project = normalize_project_name(entry.get("project", ONBEKEND_PROJECT))
                 content = entry.get("entry", "")
                 if not content.strip():
                     continue
