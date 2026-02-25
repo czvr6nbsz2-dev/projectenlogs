@@ -14,3 +14,8 @@ Signalen / aandachtspunten:
 - Grote verschillen in het programma tussen beide partijen.
 - Groot prijsverschil tussen wat wij kunnen betalen en wat zij bieden.
 
+## 2026-02-25
+
+Besluiten / afspraken:
+- Concept mail aan de drie corporaties met reactie naar AM gestuurd.
+

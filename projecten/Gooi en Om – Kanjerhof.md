@@ -23,3 +23,8 @@ Signalen / aandachtspunten:
 - Planinhoudelijke opmerkingen moeten samen met de architect besproken worden.
 - Planning is grof geschetst maar moet nog nader uitgewerkt worden.
 
+## 2026-02-25
+
+Besluiten / afspraken:
+- Concept demarcatielijst aan Wink toegestuurd.
+
