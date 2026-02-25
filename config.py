@@ -14,12 +14,19 @@ PROJECTEN = {
     "Gooi en Om – Kininelaantje": ["Kininelaantje"],
 
     "Woonbedrijf – Stadshart Woensel": ["Stadshart Woensel"],
+    "Woonbedrijf – Limbeek": ["Limbeek"],
+    "Woonbedrijf – Vaartbroek": ["Vaartbroek"],
 
     "Idealis – RvC": ["RvC", "Raad van Commissarissen"],
 
     "Kennemerhart – Jansstraat": ["Jansstraat"],
 
-    "Wonen Limburg – n.t.b.": ["Wonen Limburg"],
+    "Wonen Limburg – Kazernekwartier Charlie": ["Kazernekwartier", "Charlie"],
+    "Wonen Limburg – Veilingterrein": ["Veilingterrein"],
+    "Wonen Limburg – Kiekweg": ["Kiekweg", "beschut wonen"],
+    "Wonen Limburg – Rabobank Venray": ["Rabobank Venray", "Rabobank"],
+    "Wonen Limburg – Servaashof Vigo": ["Servaashof", "Vigo"],
+    "Wonen Limburg – VieCuri": ["VieCuri"],
 }
 
 PROJECT_MAP = "projecten"
@@ -39,6 +46,8 @@ CLIENT_FOLDERS = [
     "Idealis",
     "OpenbaarBelang",
     "Stadshart Woensel - Eindhoven",
+    "Wonen Limburg",
+    "Woonbedrijf",
     "Smart2Result",
 ]
 

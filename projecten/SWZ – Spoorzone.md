@@ -7,7 +7,7 @@ Besluiten / afspraken:
 ## 2026-02-18
 
 Besluiten / afspraken:
-- Een gesprek houden en elkaar op de hoogte houden.
+- In gesprek blijven en elkaar op de hoogte houden.
 - Escaleren naar managers in de directie.
 
 Signalen / aandachtspunten:

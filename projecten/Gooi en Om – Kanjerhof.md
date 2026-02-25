@@ -12,14 +12,14 @@ Besluiten / afspraken:
 
 ## 2026-02-19
 
-Signalen / aandachtspunten:
-- Project moet nog een uitspraak van IJsselheem krijgen over de volledige verhuur aan cliënten, om de gemeente te overtuigen dat de parkeeroplossing voldoet.
-
 Besluiten / afspraken:
+- Kennismakingsesprek met Stichting Kanjerhof gehad.
 - Afspraken over hoe de overeenkomst uitgewerkt wordt tot financiële afspraken.
 - Demarcatie afspreken.
+- Vervolgacties: planning, overeenkomst en inhoudelijke opmerkingen op plan met elkaar inventariseren.
 
 Signalen / aandachtspunten:
+- Project moet nog een uitspraak van IJsselheem krijgen over de volledige verhuur aan cliënten, om de gemeente te overtuigen dat de parkeeroplossing voldoet.
 - Planinhoudelijke opmerkingen moeten samen met de architect besproken worden.
 - Planning is grof geschetst maar moet nog nader uitgewerkt worden.
 

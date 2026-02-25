@@ -7,9 +7,8 @@
     <string>com.arthur.projectenlog</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/arthur/conductor/workspaces/projectenlogs/rio-de-janeiro/verwerk.py</string>
-        <string>--batch</string>
+        <string>/bin/bash</string>
+        <string>/Users/arthur/conductor/workspaces/projectenlogs/rio-de-janeiro/run-nightly.sh</string>
     </array>
     <key>WorkingDirectory</key>
     <string>/Users/arthur/conductor/workspaces/projectenlogs/rio-de-janeiro</string>
