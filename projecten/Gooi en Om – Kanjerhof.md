@@ -28,3 +28,10 @@ Signalen / aandachtspunten:
 Besluiten / afspraken:
 - Concept demarcatielijst aan Wink toegestuurd.
 
+## 2026-02-27
+
+Besluiten / afspraken:
+- Bespreken van de bouwkostenraming met Bink en Justin Bijkerk.
+- Bespreken van het verdere proces voor planuitwerking en aanbesteding.
+- Aanvraagomgevingsvergunning met bureau BOS.
+
