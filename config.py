@@ -7,6 +7,7 @@ PROJECTEN = {
     "SWZ – Vechtrand": ["Vechtrand"],
     "SWZ – Zwolle Zuid Zuid": ["Zwolle Zuid", "Zwolle Zuid Zuid"],
     "SWZ – Knarrenhof": ["Knarrenhof"],
+    "SWZ – Winkelcentrum Stadshagen": ["Winkelcentrum Stadshagen", "Stadshagen"],
 
     "Openbaar Belang – Parkeren Zwolle": ["Parkeren Zwolle"],
 

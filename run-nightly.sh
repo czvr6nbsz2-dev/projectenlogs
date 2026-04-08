@@ -13,7 +13,7 @@ log "=== Nightly run gestart ==="
 
 # 1. Pull laatste wijzigingen van GitHub (o.a. verwerkte audio)
 cd "$REPO_DIR"
-if git pull origin main >> "$LOG" 2>&1; then
+if git fetch origin main >> "$LOG" 2>&1 && git reset --hard origin/main >> "$LOG" 2>&1; then
   log "Git pull geslaagd"
 else
   log "Git pull mislukt (geen netwerk?)"
