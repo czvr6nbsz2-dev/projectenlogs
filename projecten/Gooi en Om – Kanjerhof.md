@@ -35,3 +35,14 @@ Besluiten / afspraken:
 - Bespreken van het verdere proces voor planuitwerking en aanbesteding.
 - Aanvraagomgevingsvergunning met bureau BOS.
 
+## 2026-04-09
+
+Besluiten / afspraken:
+- Overeenkomsten doorgenomen met Bink en juristen, definitief conceptversies over twee weken met elkaar te bespreken.
+- Actiepunten om koopovereenkomst en onderliggende afspraken te maken met nieuwe projectleider.
+- Vervolgafspraak over twee weken.
+
+Signalen / aandachtspunten:
+- Er moet nog veel uitgezocht worden.
+- Gemeente vraagt om tien parkeerplaatsen en om het gebouw twee meter op te schuiven, maar dit is niet meer mogelijk in deze verre fase van het plan.
+

@@ -16,3 +16,12 @@ Besluiten / afspraken:
 Besluiten / afspraken:
 - Akkoord aan gemeente bevestigd met bepalingen overeenkomst.
 
+## 2026-04-09
+
+Besluiten / afspraken:
+- Overeenkomst door directeur GNO ondertekend en verzonden naar de gemeente.
+- Volgende stap is ondertekening door Houtster.
+
+Signalen / aandachtspunten:
+- Na ondertekening start projectactiviteiten en organisatie van een feestje.
+
