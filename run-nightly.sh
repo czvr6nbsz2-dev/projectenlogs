@@ -19,10 +19,10 @@ else
   log "Git pull mislukt (geen netwerk?)"
 fi
 
-# 2. Sync projecten naar iCloud
-if [ -f "$REPO_DIR/sync-projecten.sh" ]; then
-  bash "$REPO_DIR/sync-projecten.sh"
-  log "iCloud sync gedaan"
+# 2. Sync projecten naar Apple Notities
+if [ -f "$REPO_DIR/sync-notes.py" ]; then
+  python3 "$REPO_DIR/sync-notes.py" >> "$LOG" 2>&1
+  log "Apple Notities sync gedaan"
 fi
 
 log "=== Nightly run klaar ==="
